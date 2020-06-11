@@ -14,16 +14,19 @@ class UserItem extends Component {
 	// 	};
 	// }
 
-	state = {
-		id: 'id',
-		login: 'mojombo',
-		avatar_url: 'https://avatars0.githubusercontent.com/u/1?v=4',
-		html_url: 'https://github.com/mojombo',
-	};
+	// Now that we are passing the UserItem component into the Users component, we no longer need state. Instead we use the UserItem props(properties) to pass in to the Users state for updating and display.
+	// state = {
+	// 	id: 'id',
+	// 	login: 'mojombo',
+	// 	avatar_url: 'https://avatars0.githubusercontent.com/u/1?v=4',
+	// 	html_url: 'https://github.com/mojombo',
+	// };
 
 	render() {
 		// this const is a destructuring statement used so that you don't have to type this.state.login and then this.state.avatar_url and so forth, you can simple type the state property name you want.
-		const { login, avatar_url, html_url } = this.state;
+		// const { login, avatar_url, html_url } = this.state;
+		// Refactored to use the Users component. Now we are passing properties into the Users component from here, UserItem. Now every user pulled in from the API will create a UserItem component that is then placed within the Users parent component and from there, all users are placed within the App component to be rendered to the DOM.
+		const { login, avatar_url, html_url } = this.props.user;
 		return (
 			<div className='card text-center'>
 				<img
