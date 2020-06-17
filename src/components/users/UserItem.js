@@ -35,7 +35,7 @@ UserItem.propTypes = {
 // constructor() {
 // 	// Must call the function super() to call the parent class constructor
 // 	super();
-// 	// State is really just a JS object
+// 	// State is really just a property of the component. It MUST be set to a JS object.
 // 	this.state = {
 // 		id: 'id',
 // 		login: 'mojombo',
