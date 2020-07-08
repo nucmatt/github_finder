@@ -10,22 +10,38 @@ class App extends Component {
 		users: [],
 		loading: false,
 	};
-	// componentDidMount is known as a lifecycle method. render is a lifecycle method as well and is the only one that is required.
-	async componentDidMount() {
-		this.setState({ loading: true });
-		// Registerd for OAUTH app with github. client id and secret are login credentials. You can find them in the .env.local file, where they are set as the variables shown in the template literals. NOTE: .env.local (local environment) files are in the gitignore file so they are not copied to github so it can contain info that you don't want publicly available.
-		// console.log(process.env.REACT_APP_GITHUB_CLIENT_ID);
-		const res = await axios.get(`https://api.github.com/users?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
 
-		this.setState({ users: res.data, loading: false });
-		// console.log(res.data);
+	// This is replaced by the search functionality so we don't want the first 30 users showing up every time.
+	// componentDidMount is known as a lifecycle method. render is a lifecycle method as well and is the only one that is required.
+	// async componentDidMount() {
+	// 	this.setState({ loading: true });
+	// 	// Registerd for OAUTH app with github. client id and secret are login credentials. You can find them in the .env.local file, where they are set as the variables shown in the template literals. NOTE: .env.local (local environment) files are in the gitignore file so they are not copied to github so it can contain info that you don't want publicly available.
+	// 	// console.log(process.env.REACT_APP_GITHUB_CLIENT_ID);
+	// 	const res = await axios.get(`https://api.github.com/users?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+
+	// 	this.setState({ users: res.data, loading: false });
+	// 	// console.log(res.data);
+	// }
+
+	// Search Github users. The syntax for the search API is found in the Github developer documentation found here: https://developer.github.com/v3/search/
+	searchUsers = async text => {
+		// console.log(text);
+		this.setState({ loading: true });
+
+		const res = await axios.get(
+			`https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+		);
+
+		this.setState({ users: res.data.items, loading: false});
+
 	}
+
 	render() {
 		return (
 			<div className='App'>
 				<Navbar />
 				<div className='container'>
-					<Search />
+					<Search searchUsers={this.searchUsers} />
 					<Users loading={this.state.loading} users={this.state.users} />
 				</div>
 			</div>
