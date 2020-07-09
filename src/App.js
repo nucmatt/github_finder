@@ -24,7 +24,7 @@ class App extends Component {
 	// }
 
 	// Search Github users. The syntax for the search API is found in the Github developer documentation found here: https://developer.github.com/v3/search/
-	searchUsers = async text => {
+	searchUsers = async (text) => {
 		// console.log(text);
 		this.setState({ loading: true });
 
@@ -32,17 +32,27 @@ class App extends Component {
 			`https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
 		);
 
-		this.setState({ users: res.data.items, loading: false});
+		this.setState({ users: res.data.items, loading: false });
+	};
 
-	}
+	// Clear users from state
+	clearUsers = () => this.setState({ users: [], loading: false });
 
 	render() {
+		// Destructuring assignment to clean up the return a bit. Remember that with destructuring when you write any of the const names it will be interpreted as this.state.users, this.state.loading, etc. Note you can still call properties of these values such as users.length and it will be interpreted as this.state.users.length.
+		const { users, loading } = this.state;
+		
 		return (
 			<div className='App'>
 				<Navbar />
 				<div className='container'>
-					<Search searchUsers={this.searchUsers} />
-					<Users loading={this.state.loading} users={this.state.users} />
+					{/* Add the properties used in Search.js here to the App.js when Search.js is called to "catch" the properties hoisted up from Search to App. */}
+					<Search
+						searchUsers={this.searchUsers}
+						clearUsers={this.clearUsers}
+						showClear={users.length > 0 ? true : false}
+					/>
+					<Users loading={loading} users={users} />
 				</div>
 			</div>
 		);

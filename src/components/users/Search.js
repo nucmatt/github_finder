@@ -9,6 +9,8 @@ export class Search extends Component {
     // Be sure to add your prop types to every component that has props. This is basically error checking and will warn you of issues in your code, hopefully before they become an problem.
     static propTypes = {
         searchUsers: PropTypes.func.isRequired,
+        clearUsers: PropTypes.func.isRequired,
+        showClear: PropTypes.bool.isRequired,
     }
 
     // Note that the binding of the this keyword occurs within the render method below. The onChange method below implicitly binds the this keyword because it is an arrow function and that is how React currently handles arrow functions. The third alternative (you can find this in your Dynalist notes under React/JSX/this Keyword and JSX) is to bind explicitly bind the this keyword to the component's local scope within the the constructor.
@@ -29,6 +31,8 @@ export class Search extends Component {
     onChange = e => this.setState({ [e.target.name]: e.target.value });
 
 	render() {
+        // A destructuring assignment to clean up the code within the return.
+        const { showClear, clearUsers } = this.props
 		return (
 			<div>
 				<form onSubmit={this.onSubmit.bind(this)} className='form'>
@@ -45,6 +49,8 @@ export class Search extends Component {
 						className='btn btn-dark btn-block'
 					/>
 				</form>
+                {/* This expression conditionally shows the clear button only if there are users held in state at App.js. The value of showClear is set in App.js as a prop of Search when it is called in App.js. */}
+                {showClear && <button className="btn btn-light btn-block" onClick={clearUsers}>Clear</button>}
 			</div>
 		);
 	}
