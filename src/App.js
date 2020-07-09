@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
+// installed React Router DOM via npm command npm i react-router-dom
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Users from './components/users/Users';
 import Search from './components/users/Search';
 import Alert from './components/layout/Alert';
+import About from './components/pages/About';
 import axios from 'axios';
 import './App.css';
 
@@ -10,7 +13,7 @@ class App extends Component {
 	state = {
 		users: [],
 		loading: false,
-		alert: null
+		alert: null,
 	};
 
 	// This is replaced by the search functionality so we don't want the first 30 users showing up every time.
@@ -44,28 +47,41 @@ class App extends Component {
 	setAlert = (msg, type) => {
 		this.setState({ alert: { msg, type } });
 
-		setTimeout(() => this.setState({alert: null}), 5000);
-	}
+		setTimeout(() => this.setState({ alert: null }), 5000);
+	};
 
 	render() {
 		// Destructuring assignment to clean up the return a bit. Remember that with destructuring when you write any of the const names it will be interpreted as this.state.users, this.state.loading, etc. Note you can still call properties of these values such as users.length and it will be interpreted as this.state.users.length.
 		const { users, loading } = this.state;
 
 		return (
-			<div className='App'>
-				<Navbar />
-				<div className='container'>
-					<Alert alert={this.state.alert} />
-					{/* Add the properties used in Search.js here to the App.js when Search.js is called to "catch" the properties hoisted up from Search to App. */}
-					<Search
-						searchUsers={this.searchUsers}
-						clearUsers={this.clearUsers}
-						showClear={users.length > 0 ? true : false}
-						setAlert={this.setAlert}
-					/>
-					<Users loading={loading} users={users} />
+			<Router>
+				<div className='App'>
+					<Navbar />
+					<div className='container'>
+						<Alert alert={this.state.alert} />
+						<Switch>
+							<Route
+								exact
+								path='/'
+								render={(props) => (
+									<Fragment>
+										{/* Add the properties used in Search.js here to the App.js when Search.js is called to "catch" the properties hoisted up from Search to App. */}
+										<Search
+											searchUsers={this.searchUsers}
+											clearUsers={this.clearUsers}
+											showClear={users.length > 0 ? true : false}
+											setAlert={this.setAlert}
+										/>
+										<Users loading={loading} users={users} />
+									</Fragment>
+								)}
+							/>
+							<Route exact path='/about' component={About} />
+						</Switch>
+					</div>
 				</div>
-			</div>
+			</Router>
 		);
 	}
 }

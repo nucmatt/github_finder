@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 // More destructuring! Remember that props is implicit within the parentheses that creates the stateless functional component. See UserItem for more destructuring explanation/goodness.
 const Navbar = ({ icon, title}) => {
@@ -8,6 +9,17 @@ const Navbar = ({ icon, title}) => {
 			<h1>
 				<i className={icon} /> {title}
 			</h1>
+			<ul>
+				<li>
+					{/* Using <a> tags for our links makes it so that state is cleared from App.js when you use the links. By using <Link> tags from react-router-dom, you can preserve state when navigating between links in the app. */}
+					{/* <a href="/">Home</a> */}
+					<Link to='/'>Home</Link>
+				</li>
+				<li>
+					{/* <a href="/about">About</a> */}
+					<Link to='/about'>About</Link>
+				</li>
+			</ul>
 		</nav>
 	);
 };
