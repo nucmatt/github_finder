@@ -14,6 +14,7 @@ class App extends Component {
 	state = {
 		users: [],
 		user: {},
+		repos: [],
 		loading: false,
 		alert: null,
 	};
@@ -53,6 +54,16 @@ class App extends Component {
 		this.setState({ user: res.data, loading: false });
 	};
 
+	// Get user's repos
+	getUserRepos = async login => {
+		this.setState({ loading: true });
+
+		// per_page and sort are part of the Github api.
+		const res = await axios.get(`https://api.github.com/users/${login}/repos?per_page=5&sort=created:asc&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+
+		this.setState({ repos: res.data, loading: false });
+	}
+
 	// Clear users from state
 	clearUsers = () => this.setState({ users: [], loading: false });
 
@@ -65,7 +76,7 @@ class App extends Component {
 
 	render() {
 		// Destructuring assignment to clean up the return a bit. Remember that with destructuring when you write any of the const names it will be interpreted as this.state.users, this.state.loading, etc. Note you can still call properties of these values such as users.length and it will be interpreted as this.state.users.length.
-		const { users, user, loading } = this.state;
+		const { users, user, repos, loading } = this.state;
 
 		return (
 			<Router>
@@ -99,7 +110,9 @@ class App extends Component {
 										// Rest operator in action!
 										{...props}
 										getUser={this.getUser}
+										getUserRepos={this.getUserRepos}
 										user={user}
+										repos={repos}
 										loading={loading}
 									/>
 								)}

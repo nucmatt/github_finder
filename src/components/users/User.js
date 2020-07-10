@@ -1,20 +1,25 @@
 import React, { Fragment, Component } from 'react';
 import Spinner from '../layout/Spinner';
+import Repos from '../repos/Repos';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 // Here is how I understand what is happening here with the <Route>s and state and prop calls, etc. After the search is completed, you click on the `More` button in the UserItem. The button contains a <Link>. The <Link> calls the <Route> that takes that user's login and calls the getUser method in App.js. The getUser method makes a call to the Github API(via async/await in axios) using the user's login that then fills in the user state in App.js with the user's api information. This user data is then passed in to the <User /> component call in App.js as props.
 
 export class User extends Component {
+	// Using the lifecycle method component did mount to call the User component's props ONLY AFTER the User component has been successfully loaded.
 	componentDidMount() {
 		// Here you are pulling the parameter 'login' from the User properties assigned in App.js when the User component is called. It is found in the <Route> that creates the User.js page at path='user/:login'. I'm not really clear on how this works.
 		this.props.getUser(this.props.match.params.login);
+		this.props.getUserRepos(this.props.match.params.login);
 	}
 
 	static propTypes = {
 		loading: PropTypes.bool,
-		user: PropTypes.object.isRequired,
+        user: PropTypes.object.isRequired,
+        repos: PropTypes.array.isRequired,
 		getUser: PropTypes.func.isRequired,
+		getUserRepos: PropTypes.func.isRequired,
 	};
 	render() {
 		const {
@@ -33,7 +38,7 @@ export class User extends Component {
 			company,
 		} = this.props.user;
 
-		const { loading } = this.props;
+		const { loading, repos } = this.props;
 
 		if (loading) return <Spinner />;
 
@@ -95,13 +100,14 @@ export class User extends Component {
 						</ul>
 					</div>
 				</div>
+				<div className='card text-center'>
+					<div className='badge badge-primary'>Followers: {followers}</div>
+					<div className='badge badge-success'>Following: {following}</div>
+					<div className='badge badge-light'>Public Repos: {public_repos}</div>
+					<div className='badge badge-dark'>Public Gists: {public_gists}</div>
+				</div>
 
-                <div className="card text-center">
-                    <div className="badge badge-primary">Followers: {followers}</div>
-                    <div className="badge badge-success">Following: {following}</div>
-                    <div className="badge badge-light">Public Repos: {public_repos}</div>
-                    <div className="badge badge-dark">Public Gists: {public_gists}</div>
-                </div>
+                <Repos repos={repos} />
 			</Fragment>
 		);
 	}
