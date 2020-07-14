@@ -1,64 +1,58 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types'
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-export class Search extends Component {
-	state = {
-		text: '',
-    };
+// Props are passed to functional components as arguments. The curly brace format below destructures the props. This replaces the class-based component's this.props.searchUsers etc.
+const Search = ({ searchUsers, showClear, clearUsers, setAlert }) => {
+	// This destructures your state for the useState method. text is what the state value's name, setText is whatever method you want to use to manipulate the state's value. Here the text state is set to a blank value just like befor when we used state = { text: '' }.
+	const [text, setText] = useState('');
 
-    // Be sure to add your prop types to every component that has props. This is basically error checking and will warn you of issues in your code, hopefully before they become an problem.
-    static propTypes = {
-        searchUsers: PropTypes.func.isRequired,
-        clearUsers: PropTypes.func.isRequired,
-        showClear: PropTypes.bool.isRequired,
-        setAlert:  PropTypes.func.isRequired,
-    }
+	const onSubmit = (e) => {
+		e.preventDefault();
+		if (text === '') {
+			setAlert('Please enter something', 'light');
+		} else {
+			searchUsers(text);
+			// This simply resets the search from to blank once a search has been submitted. MUCH simpler than having to call setState again to reset the component state to a blank value.
+			setText('');
+		}
+	};
 
-    // Note that the binding of the this keyword occurs within the render method below. The onChange method below implicitly binds the this keyword because it is an arrow function and that is how React currently handles arrow functions. The third alternative (you can find this in your Dynalist notes under React/JSX/this Keyword and JSX) is to bind explicitly bind the this keyword to the component's local scope within the the constructor.
-    onSubmit(e) {
-        e.preventDefault();
-        if(this.state.text === '') {
-            this.props.setAlert('Please enter something', 'light')
-        } else {
-            // Passing the search text up to App.js as a prop. This keeps all functionality at the top level. Note that this is the reverse of passing props down from the top level into individual components. This passing props up and down can become a hassle in complicated apps. Thus you have tools like Context and Redux to simplify prop management.
-            this.props.searchUsers(this.state.text);
-            // This simply resets the search from to blank once a search has been submitted and passedup to App.js
-            this.setState({ text: ''});
-        }
-    }
-    
-    // This is a simple example because it is only one input. It gets more complicated when you have multiple inputs that you want to track in state. Below is the syntax  you can use for multiple inputs.
-    // onChange = e => {
-    //     this.setState({ text: e.target.value });
-    // }
+	// With the class component onChange called setState to update the component state. Now you call setText, the method introduced above when setting the functional component's state via useState.
+	const onChange = e => setText(e.target.value);
 
-    // By using [e.target.name] you can have one onChange method that will target each input based on it's name value and update the state corresponding to the name. Note that you the input name value must match the state object key and state must hold a separate key for each input you want to track.
-    onChange = e => this.setState({ [e.target.name]: e.target.value });
+	// No more wrapping the return in a render function. Context useState in a functional component also clears up the need for binding the this keyword from the window object to the component since there is no more need for this keywords since the component no longs extends a class.
+	return (
+		<div>
+			<form onSubmit={onSubmit} className='form'>
+				<input
+					type='text'
+					name='text'
+					placeholder='Search Users...'
+					value={text}
+					onChange={onChange}
+				/>
+				<input
+					type='submit'
+					value='Search'
+					className='btn btn-dark btn-block'
+				/>
+			</form>
+			{/* This expression conditionally shows the clear button only if there are users held in state at App.js. The value of showClear is set in App.js as a prop of Search when it is called in App.js. */}
+			{showClear && (
+				<button className='btn btn-light btn-block' onClick={clearUsers}>
+					Clear
+				</button>
+			)}
+		</div>
+	);
+};
 
-	render() {
-        // A destructuring assignment to clean up the code within the return.
-        const { showClear, clearUsers } = this.props
-		return (
-			<div>
-				<form onSubmit={this.onSubmit.bind(this)} className='form'>
-					<input
-						type='text'
-						name='text'
-						placeholder='Search Users...'
-                        value={this.state.text}
-                        onChange={this.onChange}
-					/>
-					<input
-						type='submit'
-						value='Search'
-						className='btn btn-dark btn-block'
-					/>
-				</form>
-                {/* This expression conditionally shows the clear button only if there are users held in state at App.js. The value of showClear is set in App.js as a prop of Search when it is called in App.js. */}
-                {showClear && <button className="btn btn-light btn-block" onClick={clearUsers}>Clear</button>}
-			</div>
-		);
-	}
-}
+// Proptypes are in this format for functional components.
+Search.propTypes = {
+	searchUsers: PropTypes.func.isRequired,
+	clearUsers: PropTypes.func.isRequired,
+	showClear: PropTypes.bool.isRequired,
+	setAlert: PropTypes.func.isRequired,
+};
 
 export default Search;
