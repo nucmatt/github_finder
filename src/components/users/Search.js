@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 // Props are passed to functional components as arguments. The curly brace format below destructures the props. This replaces the class-based component's this.props.searchUsers etc.
 const Search = ({ searchUsers, showClear, clearUsers, setAlert }) => {
-	// This destructures your state for the useState method. text is what the state value's name, setText is whatever method you want to use to manipulate the state's value. Here the text state is set to a blank value just like befor when we used state = { text: '' }.
+	// This destructures your state for the useState method. text is what the state value's name, setText is whatever method you want to use to manipulate the state's value. Here the text state is set to a blank value just like before when we used state = { text: '' }.
 	const [text, setText] = useState('');
 
 	const onSubmit = (e) => {
@@ -20,7 +20,7 @@ const Search = ({ searchUsers, showClear, clearUsers, setAlert }) => {
 	// With the class component onChange called setState to update the component state. Now you call setText, the method introduced above when setting the functional component's state via useState.
 	const onChange = e => setText(e.target.value);
 
-	// No more wrapping the return in a render function. Context useState in a functional component also clears up the need for binding the this keyword from the window object to the component since there is no more need for this keywords since the component no longs extends a class.
+	// No more wrapping the return in a render function. React Hooks useState in a functional component also clears up the need for binding the this keyword from the window object to the component since there is no more need for this keywords since the component no longs extends a class.
 	return (
 		<div>
 			<form onSubmit={onSubmit} className='form'>
