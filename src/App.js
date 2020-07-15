@@ -41,21 +41,7 @@ const App = () => {
 	// }
 
 	// Search Github users. The syntax for the search API is found in the Github developer documentation found here: https://developer.github.com/v3/search/
-	const searchUsers = async (text) => {
-		// console.log(text);
-		// this.setState({ loading: true });
-		setLoading(true);
-
-		const res = await axios.get(
-			`https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
-		);
-
-		// See how much more clear what is going on is when set to functional components with Hooks. Pretty cool stuff.
-		// this.setState({ users: res.data.items, loading: false });
-		setUsers(res.data.items);
-		setLoading(false);
-	};
-
+	
 	// Get single user
 	const getUser = async (login) => {
 		// this.setState({ loading: true });
@@ -116,9 +102,9 @@ const App = () => {
 								path='/'
 								render={(props) => (
 									<Fragment>
-										{/* Add the properties used in Search.js here to the App.js when Search.js is called to "catch" the properties hoisted up from Search to App. */}
 										<Search
-											searchUsers={searchUsers}
+											// searchUsers is removed to the reducer so it is no longer passed to the Search component as a prop.
+											// searchUsers={searchUsers}
 											clearUsers={clearUsers}
 											showClear={users.length > 0 ? true : false}
 											setAlert={showAlert}

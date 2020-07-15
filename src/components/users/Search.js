@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
+import GithubContext from '../../context/github/githubContext';
 
-// Props are passed to functional components as arguments. The curly brace format below destructures the props. This replaces the class-based component's this.props.searchUsers etc.
-const Search = ({ searchUsers, showClear, clearUsers, setAlert }) => {
+// Since searchUsers is no longer being passed around as a prop, it is removed from the Search component (and thus from the propTypes below).
+const Search = ({ showClear, clearUsers, setAlert }) => {
+	// Since searchUsers is now part of the context, we import GithubContext above, initialize the githubContext function with useContext() (imported from React Hooks). That way we can use the methods contained in the reducer here in the Search component.
+	const githubContext = useContext(GithubContext);
 	// This destructures your state for the useState method. text is what the state value's name, setText is whatever method you want to use to manipulate the state's value. Here the text state is set to a blank value just like before when we used state = { text: '' }.
 	const [text, setText] = useState('');
 
@@ -11,7 +14,8 @@ const Search = ({ searchUsers, showClear, clearUsers, setAlert }) => {
 		if (text === '') {
 			setAlert('Please enter something', 'light');
 		} else {
-			searchUsers(text);
+			// Here we use the githubContext we initialized above to grab the searchUsers function.
+			githubContext.searchUsers(text);
 			// This simply resets the search from to blank once a search has been submitted. MUCH simpler than having to call setState again to reset the component state to a blank value.
 			setText('');
 		}
@@ -49,7 +53,6 @@ const Search = ({ searchUsers, showClear, clearUsers, setAlert }) => {
 
 // Proptypes are in this format for functional components.
 Search.propTypes = {
-	searchUsers: PropTypes.func.isRequired,
 	clearUsers: PropTypes.func.isRequired,
 	showClear: PropTypes.bool.isRequired,
 	setAlert: PropTypes.func.isRequired,
