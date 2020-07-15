@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react';
+import React, { Fragment, useState } from 'react';
 // installed React Router DOM via npm command npm i react-router-dom
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
@@ -10,14 +10,21 @@ import About from './components/pages/About';
 import axios from 'axios';
 import './App.css';
 
-class App extends Component {
-	state = {
-		users: [],
-		user: {},
-		repos: [],
-		loading: false,
-		alert: null,
-	};
+const App = () => {
+	// Note how the useState variables map directly to the state object properties used before refactoring, i.e. empty arrays/object, bool, null.
+	// state = {
+	// 	users: [],
+	// 	user: {},
+	// 	repos: [],
+	// 	loading: false,
+	// 	alert: null,
+	// };
+	const [users, setUsers] = useState([]);
+	const [user, setUser] = useState({});
+	const [repos, setRepos] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [alert, setAlert] = useState(null);
+
 
 	// This is replaced by the search functionality so we don't want the first 30 users showing up every time.
 	// componentDidMount is known as a lifecycle method. render is a lifecycle method as well and is the only one that is required.
@@ -32,58 +39,72 @@ class App extends Component {
 	// }
 
 	// Search Github users. The syntax for the search API is found in the Github developer documentation found here: https://developer.github.com/v3/search/
-	searchUsers = async (text) => {
+	const searchUsers = async (text) => {
 		// console.log(text);
-		this.setState({ loading: true });
+		// this.setState({ loading: true });
+		setLoading(true);
 
 		const res = await axios.get(
 			`https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
 		);
 
-		this.setState({ users: res.data.items, loading: false });
+		// See how much more clear what is going on is when set to functional components with Hooks. Pretty cool stuff.
+		// this.setState({ users: res.data.items, loading: false });
+		setUsers(res.data.items);
+		setLoading(false);
 	};
 
 	// Get single user
-	getUser = async (login) => {
-		this.setState({ loading: true });
+	const getUser = async (login) => {
+		// this.setState({ loading: true });
+		setLoading(true);
 
 		const res = await axios.get(
 			`https://api.github.com/users/${login}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
 		);
 
-		this.setState({ user: res.data, loading: false });
+		// this.setState({ user: res.data, loading: false });
+		setUser(res.data);
+		setLoading(false);
 	};
 
 	// Get user's repos
-	getUserRepos = async login => {
-		this.setState({ loading: true });
+	const getUserRepos = async login => {
+		// this.setState({ loading: true });
+		setLoading(true);
 
 		// per_page and sort are part of the Github api.
 		const res = await axios.get(`https://api.github.com/users/${login}/repos?per_page=5&sort=created:asc&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
 
-		this.setState({ repos: res.data, loading: false });
+		// this.setState({ repos: res.data, loading: false });
+		setRepos(res.data);
+		setLoading(false);
 	}
 
 	// Clear users from state
-	clearUsers = () => this.setState({ users: [], loading: false });
+	// clearUsers = () => this.setState({ users: [], loading: false });
+	const clearUsers = () => {
+		setUsers([]);
+		setLoading(false);
+	}
 
 	// Alerts for errors
-	setAlert = (msg, type) => {
-		this.setState({ alert: { msg, type } });
+	// Note the change for this function from setAlert to showAlert. You obviously can't have two functions of the same name trying to call each other.
+	const showAlert = (msg, type) => {
+		// this.setState({ alert: { msg, type } });
+		setAlert({ msg, type});
 
-		setTimeout(() => this.setState({ alert: null }), 5000);
+		// setTimeout(() => this.setState({ alert: null }), 5000);
+		setTimeout(() => setAlert(null), 5000);
 	};
 
-	render() {
-		// Destructuring assignment to clean up the return a bit. Remember that with destructuring when you write any of the const names it will be interpreted as this.state.users, this.state.loading, etc. Note you can still call properties of these values such as users.length and it will be interpreted as this.state.users.length.
-		const { users, user, repos, loading } = this.state;
-
+		// Note again there is no render() method and no need to destructure state to this.state variables since there is no state object! Also Note that all the this.'s are removes below since you are no longer using a class based component. That also means no having to bind the 'this' keyword from the window object to the class methods.
 		return (
 			<Router>
 				<div className='App'>
 					<Navbar />
 					<div className='container'>
-						<Alert alert={this.state.alert} />
+						<Alert alert={alert} />
 						<Switch>
 							<Route
 								exact
@@ -92,10 +113,10 @@ class App extends Component {
 									<Fragment>
 										{/* Add the properties used in Search.js here to the App.js when Search.js is called to "catch" the properties hoisted up from Search to App. */}
 										<Search
-											searchUsers={this.searchUsers}
-											clearUsers={this.clearUsers}
+											searchUsers={searchUsers}
+											clearUsers={clearUsers}
 											showClear={users.length > 0 ? true : false}
-											setAlert={this.setAlert}
+											setAlert={showAlert}
 										/>
 										<Users loading={loading} users={users} />
 									</Fragment>
@@ -109,8 +130,8 @@ class App extends Component {
 									<User
 										// Rest operator in action!
 										{...props}
-										getUser={this.getUser}
-										getUserRepos={this.getUserRepos}
+										getUser={getUser}
+										getUserRepos={getUserRepos}
 										user={user}
 										repos={repos}
 										loading={loading}
@@ -123,6 +144,5 @@ class App extends Component {
 			</Router>
 		);
 	}
-}
 
 export default App;
