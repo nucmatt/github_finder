@@ -22,8 +22,9 @@ const App = () => {
 	// 	loading: false,
 	// 	alert: null,
 	// };
-	const [users, setUsers] = useState([]);
-	const [user, setUser] = useState({});
+	// The goal of using the Context API is to remove all the state from App.js and into the context so each of these will be removed in turn as the refactoring continues.
+	// const [users, setUsers] = useState([]);
+	// const [user, setUser] = useState({});
 	const [repos, setRepos] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [alert, setAlert] = useState(null);
@@ -43,18 +44,19 @@ const App = () => {
 	// Search Github users. The syntax for the search API is found in the Github developer documentation found here: https://developer.github.com/v3/search/
 	
 	// Get single user
-	const getUser = async (login) => {
-		// this.setState({ loading: true });
-		setLoading(true);
+	// Removed to githugState.js for Context API refactoring.
+	// const getUser = async (login) => {
+	// 	// this.setState({ loading: true });
+	// 	setLoading(true);
 
-		const res = await axios.get(
-			`https://api.github.com/users/${login}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
-		);
+	// 	const res = await axios.get(
+	// 		`https://api.github.com/users/${login}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+	// 	);
 
-		// this.setState({ user: res.data, loading: false });
-		setUser(res.data);
-		setLoading(false);
-	};
+	// 	// this.setState({ user: res.data, loading: false });
+	// 	setUser(res.data);
+	// 	setLoading(false);
+	// };
 
 	// Get user's repos
 	const getUserRepos = async (login) => {
@@ -71,12 +73,11 @@ const App = () => {
 		setLoading(false);
 	};
 
-	// Clear users from state
-	// clearUsers = () => this.setState({ users: [], loading: false });
-	const clearUsers = () => {
-		setUsers([]);
-		setLoading(false);
-	};
+	// Clear users from state is no longer needed as it has be moved to the reducer.
+	// const clearUsers = () => {
+	// 	setUsers([]);
+	// 	setLoading(false);
+	// };
 
 	// Alerts for errors
 	// Note the change for this function from setAlert to showAlert. You obviously can't have two functions of the same name trying to call each other.
@@ -103,13 +104,14 @@ const App = () => {
 								render={(props) => (
 									<Fragment>
 										<Search
-											// searchUsers is removed to the reducer so it is no longer passed to the Search component as a prop.
+											// searchUsers, clearUsers, and showClear is moved to the reducer so it is no longer passed to the Search component as a prop. showAlert is going to be changed later.
 											// searchUsers={searchUsers}
-											clearUsers={clearUsers}
-											showClear={users.length > 0 ? true : false}
+											// clearUsers={clearUsers}
+											// showClear={users.length > 0 ? true : false}
 											setAlert={showAlert}
 										/>
-										<Users loading={loading} users={users} />
+										{/* The Users component has had the loading and users props moved to the app level state with the Context API. This call is now made within the Users component itself. <Users loading={loading} users={users}/> */}
+										<Users />
 									</Fragment>
 								)}
 							/>
@@ -121,11 +123,12 @@ const App = () => {
 									<User
 										// Rest operator in action!
 										{...props}
-										getUser={getUser}
+										// These are successively removed as props since they are not handled within the Context API.
+										// getUser={getUser}
 										getUserRepos={getUserRepos}
-										user={user}
+										// user={user}
 										repos={repos}
-										loading={loading}
+										// loading={loading}
 									/>
 								)}
 							/>

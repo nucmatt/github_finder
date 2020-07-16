@@ -1,13 +1,20 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useContext } from 'react';
 import Spinner from '../layout/Spinner';
 import Repos from '../repos/Repos';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import GithubContext from '../../context/github/githubContext';
+import githubContext from '../../context/github/githubContext';
 
 // Here is how I understand what is happening here with the <Route>s and state and prop calls, etc. After the search is completed, you click on the `More` button in the UserItem. The button contains a <Link>. The <Link> calls the <Route> that takes that user's login and calls the getUser method in App.js. The getUser method makes a call to the Github API(via async/await in axios) using the user's login that then fills in the user state in App.js with the user's api information. This user data is then passed in to the <User /> component call in App.js as props.
 
-// Instead of pulling in each property of user at function creation, just bring in user and the props are destructured below.
-const User = ({ user, loading, getUser, getUserRepos, repos, match }) => {
+// All of these props will be removed during the refactoring to use the Context API.
+// const User = ({ user, loading, getUser, getUserRepos, repos, match }) => {
+const User = ({ getUserRepos, repos, match }) => {
+	const githubContext = useContext(GithubContext);
+
+	const { getUser, loading, user } = githubContext;
+
 	// useEffect replaces the lifecycle method componentDidMount here. The effect is still the same, getUser and getUserRepos are not available until AFTER the User component is fully loaded.
 	useEffect(() => {
 		getUser(match.params.login);
@@ -106,10 +113,10 @@ const User = ({ user, loading, getUser, getUserRepos, repos, match }) => {
 };
 
 User.propTypes = {
-	loading: PropTypes.bool,
-	user: PropTypes.object.isRequired,
+	// loading: PropTypes.bool,
+	// user: PropTypes.object.isRequired,
 	repos: PropTypes.array.isRequired,
-	getUser: PropTypes.func.isRequired,
+	// getUser: PropTypes.func.isRequired,
 	getUserRepos: PropTypes.func.isRequired,
 };
 

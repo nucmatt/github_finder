@@ -10,6 +10,7 @@ import {
 	GET_REPOS,
 } from '../types';
 
+// Remember that all these state props and the functions need to be added to the GithubContext.Provider to be available to all of the components that are now importing githubContext.js.
 const GithubState = (props) => {
 	const initialState = {
 		users: [],
@@ -40,11 +41,29 @@ const GithubState = (props) => {
 		// setLoading(false);
 	};
 
-	// Get User
+    // Get User
+    const getUser = async (login) => {
+		// this.setState({ loading: true });
+		setLoading();
+
+		const res = await axios.get(
+			`https://api.github.com/users/${login}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+		);
+
+		// this.setState({ user: res.data, loading: false });
+		// setUser(res.data);
+        // setLoading(false);
+        
+        dispatch({
+            type: GET_USER,
+            payload: res.data
+        })
+	};
 
 	// Get Repos
 
 	// Clear Users
+	const clearUsers = () => dispatch({ type: CLEAR_USERS });
 
 	// Set Loading
 	// dispatch, from useReducer hook, sends to the githubReducer.js. It must send a type and can send a payload if there is any data necessary. Here we just send the type. The functionality for SET_LOADING is in githubReducer.
@@ -56,8 +75,10 @@ const GithubState = (props) => {
 				users: state.users,
 				user: state.user,
 				repos: state.repos,
-                loading: state.loading,
-                searchUsers
+				loading: state.loading,
+                searchUsers,
+                clearUsers,
+                getUser
 			}}
 		>
 			{props.children}
