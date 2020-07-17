@@ -1,4 +1,6 @@
-import React, { Fragment, useState } from 'react';
+// import React, { Fragment, useState } from 'react';
+// useState is no longer needed since all state is handled within the reducers of the Context API now.
+import React, { Fragment } from 'react';
 // installed React Router DOM via npm command npm i react-router-dom
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
@@ -10,6 +12,8 @@ import About from './components/pages/About';
 // import axios from 'axios';
 
 import GithubState from './context/github/GithubState';
+// Bring alertState.js same as githubState for the Github context. Below is the Alert.provider needed to utilize the alert context.
+import AlertState from './context/alert/AlertState';
 
 import './App.css';
 
@@ -27,7 +31,7 @@ const App = () => {
 	// const [user, setUser] = useState({});
 	// const [repos, setRepos] = useState([]);
 	// const [loading, setLoading] = useState(false);
-	const [alert, setAlert] = useState(null);
+	// const [alert, setAlert] = useState(null);
 
 	// This is replaced by the search functionality so we don't want the first 30 users showing up every time.
 	// componentDidMount is known as a lifecycle method. render is a lifecycle method as well and is the only one that is required.
@@ -81,22 +85,24 @@ const App = () => {
 
 	// Alerts for errors
 	// Note the change for this function from setAlert to showAlert. You obviously can't have two functions of the same name trying to call each other.
-	const showAlert = (msg, type) => {
-		// this.setState({ alert: { msg, type } });
-		setAlert({ msg, type });
+	// const showAlert = (msg, type) => {
+	// 	// this.setState({ alert: { msg, type } });
+	// 	setAlert({ msg, type });
 
-		// setTimeout(() => this.setState({ alert: null }), 5000);
-		setTimeout(() => setAlert(null), 5000);
-	};
+	// 	// setTimeout(() => this.setState({ alert: null }), 5000);
+	// 	setTimeout(() => setAlert(null), 5000);
+	// };
 
 	// Note again there is no render() method and no need to destructure state to this.state variables since there is no state object! Also Note that all the this.'s are removes below since you are no longer using a class based component. That also means no having to bind the 'this' keyword from the window object to the class methods.
 	return (
 		<GithubState>
+			<AlertState>
 			<Router>
 				<div className='App'>
 					<Navbar />
 					<div className='container'>
-						<Alert alert={alert} />
+						{/* The alert prop is no longer needed as it is handled within the alert context now. This again shows how the Context API eliminates the 'prop drilling' scenarios. We no longer need to pass props up and down component chains. <Alert alert={alert} /> */}
+						<Alert />
 						<Switch>
 							<Route
 								exact
@@ -108,7 +114,7 @@ const App = () => {
 											// searchUsers={searchUsers}
 											// clearUsers={clearUsers}
 											// showClear={users.length > 0 ? true : false}
-											setAlert={showAlert}
+											// setAlert={showAlert}
 										/>
 										{/* The Users component has had the loading and users props moved to the app level state with the Context API. This call is now made within the Users component itself. <Users loading={loading} users={users}/> */}
 										<Users />
@@ -138,6 +144,7 @@ const App = () => {
 					</div>
 				</div>
 			</Router>
+			</AlertState>
 		</GithubState>
 	);
 };

@@ -1,19 +1,21 @@
 import React, { useState, useContext } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import GithubContext from '../../context/github/githubContext';
+import AlertContext from '../../context/alert/alertContext';
 
 // Since searchUsers is no longer being passed around as a prop, it is removed from the Search component (and thus from the propTypes below).
 // const Search = ({ showClear, clearUsers, setAlert }) => {
 const Search = ({ setAlert }) => {
 	// Since searchUsers is now part of the context, we import GithubContext above, initialize the githubContext function with useContext() (imported from React Hooks). That way we can use the methods contained in the reducer here in the Search component. This now includes the showClear and clearUsers props. Remember to remove all these from the propTypes as well. Note that showClear prop is removed completely since we have access the the githubContext.users prop via the reducer. See the clearUsers call below for how this changes.
 	const githubContext = useContext(GithubContext);
+	const alertContext = useContext(AlertContext);
 	// This destructures your state for the useState method. text is what the state value's name, setText is whatever method you want to use to manipulate the state's value. Here the text state is set to a blank value just like before when we used state = { text: '' }.
 	const [text, setText] = useState('');
 
 	const onSubmit = (e) => {
 		e.preventDefault();
 		if (text === '') {
-			setAlert('Please enter something', 'light');
+			alertContext.setAlert('Please enter something', 'light');
 		} else {
 			// Here we use the githubContext we initialized above to grab the searchUsers function.
 			githubContext.searchUsers(text);
@@ -58,10 +60,10 @@ const Search = ({ setAlert }) => {
 };
 
 // Proptypes are in this format for functional components.
-Search.propTypes = {
-	// clearUsers: PropTypes.func.isRequired,
-	// showClear: PropTypes.bool.isRequired,
-	setAlert: PropTypes.func.isRequired,
-};
+// Search.propTypes = {
+// 	// clearUsers: PropTypes.func.isRequired,
+// 	// showClear: PropTypes.bool.isRequired,
+// 	// setAlert: PropTypes.func.isRequired,
+// };
 
 export default Search;
