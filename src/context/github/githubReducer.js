@@ -28,6 +28,12 @@ export default (state, action) => {
                 users: [],
                 loading: false
             };
+        case GET_REPOS:
+            return {
+                ...state,
+                repos: action.payload,
+                loading: false
+            }
         case SET_LOADING:
             // Since state is immutable, we must return the entire state back out of the reducer, only updating state with changes we want to make (i.e. no additons or subtractions from state). So we use the spread operator to copy all the state values into the return, and the action parameter sets a new value for whichever piece of state is being updated by the call to the reducer.
             return {
