@@ -1,12 +1,16 @@
 // import React, { Fragment, useState } from 'react';
-// useState is no longer needed since all state is handled within the reducers of the Context API now.
-import React, { Fragment } from 'react';
+// useState (and now Fragment) is no longer needed since all state is handled within the reducers of the Context API now.
+import React from 'react';
 // installed React Router DOM via npm command npm i react-router-dom
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
-import Users from './components/users/Users';
+// Users component moved to Home component
+// import Users from './components/users/Users';
 import User from './components/users/User';
-import Search from './components/users/Search';
+// Search component is moved the Home component
+// import Search from './components/users/Search';
+import Home from './components/pages/Home';
+import NotFound from './components/pages/NotFound';
 import Alert from './components/layout/Alert';
 import About from './components/pages/About';
 // import axios from 'axios';
@@ -107,19 +111,21 @@ const App = () => {
 							<Route
 								exact
 								path='/'
-								render={(props) => (
-									<Fragment>
-										<Search
-											// searchUsers, clearUsers, and showClear is moved to the reducer so it is no longer passed to the Search component as a prop. showAlert is going to be changed later.
-											// searchUsers={searchUsers}
-											// clearUsers={clearUsers}
-											// showClear={users.length > 0 ? true : false}
-											// setAlert={showAlert}
-										/>
-										{/* The Users component has had the loading and users props moved to the app level state with the Context API. This call is now made within the Users component itself. <Users loading={loading} users={users}/> */}
-										<Users />
-									</Fragment>
-								)}
+								component={Home}
+								// this entire render is no longer needed with the Home component. Simply set the component attribute to Home as above.
+								// render={(props) => (
+								// 	<Fragment>
+								// 		<Search
+								// 			// searchUsers, clearUsers, and showClear is moved to the reducer so it is no longer passed to the Search component as a prop. showAlert is going to be changed later.
+								// 			// searchUsers={searchUsers}
+								// 			// clearUsers={clearUsers}
+								// 			// showClear={users.length > 0 ? true : false}
+								// 			// setAlert={showAlert}
+								// 		/>
+								// 		{/* The Users component has had the loading and users props moved to the app level state with the Context API. This call is now made within the Users component itself. <Users loading={loading} users={users}/> */}
+								// 		<Users />
+								// 	</Fragment>
+								// )}
 							/>
 							<Route exact path='/about' component={About} />
 							<Route
@@ -140,6 +146,7 @@ const App = () => {
 								// 	/>
 								// )}
 							/>
+							<Route component={NotFound} />
 						</Switch>
 					</div>
 				</div>
